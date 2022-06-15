@@ -88,10 +88,13 @@ public class Bubble extends JLabel implements Moveable{ //bubble도 이미지니
 			}
 			
 			//40과 60의 범위 절대값
-			if((Math.abs(x - enemy.getX()) > 40 && Math.abs(x - enemy.getX()) < 60) && 
+			if((Math.abs(x - enemy.getX()) < 10) && 
 				(Math.abs(y - enemy.getY()) > 0 && Math.abs(y - enemy.getY()) < 50)) {
 				System.out.println("물방울이 적군과 충돌하였습니다.");
-				attack();
+				if(enemy.getState() == 0) {
+					attack();
+					break;
+				}
 			}
 			
 			//그냥 하면 물방울 스레드가 너무 빠르니까 Thread.sleep(1)을 추가한다.
@@ -117,6 +120,16 @@ public class Bubble extends JLabel implements Moveable{ //bubble도 이미지니
 				break;
 			}
 			
+			//아군과 적군의 거리가 10차이가 나면 적군을 물방울에 가둔다.
+			if((Math.abs(x - enemy.getX()) < 10) && 
+				(Math.abs(y - enemy.getY()) > 0 && Math.abs(y - enemy.getY()) < 50)) {
+				System.out.println("물방울이 적군과 충돌하였습니다.");
+				if(enemy.getState() == 0) {
+					attack();
+					break;
+				}
+			}
+			
 			//그냥 하면 물방울 스레드가 너무 빠르니까 Thread.sleep(1)을 추가한다.
 			try { 
 				Thread.sleep(1); 
@@ -140,21 +153,30 @@ public class Bubble extends JLabel implements Moveable{ //bubble도 이미지니
 				break;
 			}
 			
+			
 			//그냥 하면 물방울 스레드가 너무 빠르니까 Thread.sleep(1)을 추가한다.
-			try { 
-				Thread.sleep(1); 
+			try {
+				if(state == 0) { // 기본 물방울
+					Thread.sleep(1); // 빠르게 천장으로 올라감	
+				}else { // 적을 가둔 물방울
+					Thread.sleep(10); // 천천히 천장으로 올라감
+				}
+				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		
-		clearBubble(); // 천장에 버블이 도착하고 나서 3초 후에 메모리에서 소멸
+		if(state == 0) clearBubble(); // 천장에 버블이 도착하고 나서 3초 후에 메모리에서 소멸
 	}
 	
 	@Override //버블이 적군을 공격
 	public void attack() {
 		state = 1;
+		enemy.setState(1);
 		setIcon(bubbled);
+		mContext.remove(enemy); // 메모리에서 적군을 사라지게 한다. (가비지 컬렉션이 즉시 발생하지 않는다.)
+		mContext.repaint(); // 화면 갱신
 	}
 	
 	

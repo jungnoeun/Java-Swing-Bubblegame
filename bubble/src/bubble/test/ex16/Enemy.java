@@ -26,6 +26,7 @@ public class Enemy extends JLabel implements Moveable{
 	private boolean up;
 	private boolean down;
 	
+	private int state; //0(살아있는 상태), 1(물방울에 갇힌 상태)
 	
 	//적군 속도 상태
 	private final int SPEED = 3;
@@ -54,6 +55,7 @@ public class Enemy extends JLabel implements Moveable{
 		up = false;
 		down = false;
 		
+		state = 0;
 		
 		enemyWay = EnemyWay.RIGHT;
 		setIcon(enemyR); //"this"생략 가능. this.setIcon(PlayerR);
